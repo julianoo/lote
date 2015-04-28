@@ -1,4 +1,4 @@
-glic = new TipoExame
+glic = new TipoExame()
 glic.codigo = 'glic'
 glic.nome = 'glicose'
 glic.tipo = 'numero'

@@ -2,7 +2,7 @@
 (function() {
   var crea, exames, gerar_amostra, glic, hiv, parar_geracao, trig;
 
-  glic = new TipoExame;
+  glic = new TipoExame();
 
   glic.codigo = 'glic';
 

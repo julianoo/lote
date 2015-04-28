@@ -6,3 +6,5 @@ class TipoExame
   @maximo_possivel
   @minimo_normal
   @maximo_normal
+
+window.TipoExame = TipoExame

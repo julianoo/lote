@@ -5,3 +5,5 @@ class Amostra
   @criado_em
   @resultado_em
   @normal
+
+window.Amostra = Amostra
