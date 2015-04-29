@@ -2,9 +2,11 @@ class TipoExame
   @codigo
   @nome
   @tipo
-  @minimo_possivel
-  @maximo_possivel
-  @minimo_normal
-  @maximo_normal
+  @minimoPossivel
+  @maximoPossivel
+  @minimoNormal
+  @maximoNormal
 
-window.TipoExame = TipoExame
+  resultadoNormal: (resultado) ->
+
+root.TipoExame = TipoExame

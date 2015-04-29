@@ -2,43 +2,72 @@ glic = new TipoExame()
 glic.codigo = 'glic'
 glic.nome = 'glicose'
 glic.tipo = 'numero'
-glic.minimo_possivel = 100
-glic.maximo_possivel = 300
-glic.minimo_normal = 150
-glic.maximo_normal = 250
+glic.minimoPossivel = 100
+glic.maximoPossivel = 300
+glic.minimoNormal = 150
+glic.maximoNormal = 250
 
 hiv = new TipoExame
 hiv.codigo = 'hiv'
 hiv.nome = 'hiv'
 hiv.tipo = 'boolean'
-hiv.minimo_possivel = 0
-hiv.maximo_possivel = 1
-hiv.minimo_normal = 0
-hiv.maximo_normal = 1
+hiv.minimoPossivel = 0
+hiv.maximoPossivel = 1
+hiv.minimoNormal = 0
+hiv.maximoNormal = 0
 
 crea = new TipoExame
 crea.codigo = 'crea'
 crea.nome = 'creatinina'
 crea.tipo = 'numero'
-crea.minimo_possivel = 20
-crea.maximo_possivel = 50
-crea.minimo_normal = 30
-crea.maximo_normal = 40
+crea.minimoPossivel = 20
+crea.maximoPossivel = 50
+crea.minimoNormal = 30
+crea.maximoNormal = 40
 
 trig = new TipoExame
 trig.codigo = 'trig'
 trig.nome = 'triglicerideos'
 trig.tipo = 'numero'
-trig.minimo_possivel = 200
-trig.maximo_possivel = 500
-trig.minimo_normal = 300
-trig.maximo_normal = 400
+trig.minimoPossivel = 200
+trig.maximoPossivel = 500
+trig.minimoNormal = 300
+trig.maximoNormal = 400
 
 exames = [glic, hiv, crea, trig]
-gerar_amostra = false
+running = false
+loteAberto = null
+lotesProcessando = []
+lotesProntos = []
+idAmostra = 0
+idLote = 0
 
-gerar_amostra = () ->
-  gerar_amostra = true
+inicioProcessamentoLote = (lote) ->
+  loteAberto = null
 
-parar_geracao = () ->
-  gerar_amostra = false
+fimProcessamentoLote = (lote) ->
+
+amostraAdicionadaLote = (lote, am) ->
+
+
+gerarAmostra = () ->
+  if running
+    if loteAberto == null
+      idLote = idLote + 1
+      loteAberto = new Lote(idLote) if loteAberto == null
+      loteAberto.addInicioProcesso(inicioProcessamentoLote)
+      loteAberto.addFimProcesso(fimProcessamentoLote)
+      loteAberto.addAmostraAdicionada(amostraAdicionadaLote)
+
+    idAmostra = idAmostra + 1
+    am = new Amostra(idAmostra, exames[Math.floor(Math.random()*4)], loteAberto)
+    loteAberto.addAmostra(am)
+
+    setTimeout(gerarAmostra, Math.random()*6000)
+
+root.iniciarProcesso = () ->
+  running = true
+  gerarAmostra()
+
+root.pararProcesso = () ->
+  running = false
