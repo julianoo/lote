@@ -70,8 +70,6 @@
 
   running = false;
 
-  loteAberto = null;
-
   lotesProcessando = [];
 
   lotesProntos = [];
@@ -79,6 +77,8 @@
   idAmostra = 0;
 
   idLote = 0;
+
+  loteAberto = null;
 
   inicioProcessamentoLote = function(lote) {
     return loteAberto = null;
@@ -93,9 +93,7 @@
     if (running) {
       if (loteAberto === null) {
         idLote = idLote + 1;
-        if (loteAberto === null) {
-          loteAberto = new Lote(idLote);
-        }
+        loteAberto = new Lote(idLote);
         loteAberto.addInicioProcesso(inicioProcessamentoLote);
         loteAberto.addFimProcesso(fimProcessamentoLote);
         loteAberto.addAmostraAdicionada(amostraAdicionadaLote);

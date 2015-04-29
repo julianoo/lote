@@ -19,7 +19,9 @@
 
     TipoExame.maximoNormal;
 
-    TipoExame.prototype.resultadoNormal = function(resultado) {};
+    TipoExame.prototype.resultadoNormal = function(resultado) {
+      return resultado >= this.minimoNormal && resultado <= this.maximoNormal;
+    };
 
     return TipoExame;
 

@@ -8,5 +8,6 @@ class TipoExame
   @maximoNormal
 
   resultadoNormal: (resultado) ->
+    return resultado >= @minimoNormal && resultado <= @maximoNormal
 
 root.TipoExame = TipoExame

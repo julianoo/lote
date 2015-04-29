@@ -4,8 +4,6 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Lote = (function() {
-    var amostraAdicionadaList, amostras, fimProcessoList, inicioProcessoList;
-
     function Lote(id) {
       this.id = id;
       this.fireAmostraAdicionada = bind(this.fireAmostraAdicionada, this);
@@ -15,69 +13,90 @@
       this.fireInicioProcesso = bind(this.fireInicioProcesso, this);
       this.addInicioProcesso = bind(this.addInicioProcesso, this);
       this.addAmostra = bind(this.addAmostra, this);
+      this.verificarLotePronto = bind(this.verificarLotePronto, this);
       this.status = 'aberto';
       console.log('novo lote ' + this.id);
       setTimeout(this.fireInicioProcesso, 30000);
+      this.amostras = [];
+      this.inicioProcessoList = [];
+      this.fimProcessoList = [];
+      this.amostraAdicionadaList = [];
     }
 
-    amostras = [];
-
-    inicioProcessoList = [];
-
-    fimProcessoList = [];
-
-    amostraAdicionadaList = [];
+    Lote.prototype.verificarLotePronto = function(a) {
+      var i, len, processando, ref;
+      processando = false;
+      ref = this.amostras;
+      for (i = 0, len = ref.length; i < len; i++) {
+        a = ref[i];
+        if (a.status === 'processo') {
+          processando = true;
+        }
+      }
+      if (!processando) {
+        return this.fireFimProcesso;
+      }
+    };
 
     Lote.prototype.addAmostra = function(a) {
-      amostras.push(a);
+      this.amostras.push(a);
+      a.addResultadoPronto(this.verificarLotePronto);
       return this.fireAmostraAdicionada(a);
     };
 
     Lote.prototype.addInicioProcesso = function(f) {
-      inicioProcessoList.push(f);
+      this.inicioProcessoList.push(f);
       return this;
     };
 
     Lote.prototype.fireInicioProcesso = function() {
-      var f, i, len, results;
+      var a, f, i, j, len, len1, ref, ref1, results;
       this.status = 'processo';
       console.log('lote em processo ' + this.id);
+      ref = this.inicioProcessoList;
+      for (i = 0, len = ref.length; i < len; i++) {
+        f = ref[i];
+        f(this);
+      }
+      ref1 = this.amostras;
       results = [];
-      for (i = 0, len = inicioProcessoList.length; i < len; i++) {
-        f = inicioProcessoList[i];
-        results.push(f(this));
+      for (j = 0, len1 = ref1.length; j < len1; j++) {
+        a = ref1[j];
+        results.push(a.iniciarProcessamento());
       }
       return results;
     };
 
     Lote.prototype.addFimProcesso = function(f) {
-      fimProcessoList.push(f);
+      this.fimProcessoList.push(f);
       return this;
     };
 
     Lote.prototype.fireFimProcesso = function() {
-      var f, i, len, results;
+      var f, i, len, ref, results;
       this.status = 'pronto';
       console.log('lote pronto' + this.id);
+      ref = this.fimProcessoList;
       results = [];
-      for (i = 0, len = fimProcessoList.length; i < len; i++) {
-        f = fimProcessoList[i];
+      for (i = 0, len = ref.length; i < len; i++) {
+        f = ref[i];
         results.push(f(this));
       }
       return results;
     };
 
     Lote.prototype.addAmostraAdicionada = function(f) {
-      amostraAdicionadaList.push(f);
+      this.amostraAdicionadaList.push(f);
       return this;
     };
 
     Lote.prototype.fireAmostraAdicionada = function(a) {
-      var f, i, len, results;
+      var f, i, len, ref, results;
       console.log('amostra no lote ' + a.id);
+      ref = this.amostraAdicionadaList;
       results = [];
-      for (i = 0, len = amostraAdicionadaList.length; i < len; i++) {
-        f = amostraAdicionadaList[i];
+      for (i = 0, len = ref.length; i < len; i++) {
+        f = ref[i];
         results.push(f(this, a));
       }
       return results;

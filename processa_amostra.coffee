@@ -36,11 +36,11 @@ trig.maximoNormal = 400
 
 exames = [glic, hiv, crea, trig]
 running = false
-loteAberto = null
 lotesProcessando = []
 lotesProntos = []
 idAmostra = 0
 idLote = 0
+loteAberto = null
 
 inicioProcessamentoLote = (lote) ->
   loteAberto = null
@@ -54,7 +54,7 @@ gerarAmostra = () ->
   if running
     if loteAberto == null
       idLote = idLote + 1
-      loteAberto = new Lote(idLote) if loteAberto == null
+      loteAberto = new Lote(idLote)
       loteAberto.addInicioProcesso(inicioProcessamentoLote)
       loteAberto.addFimProcesso(fimProcessamentoLote)
       loteAberto.addAmostraAdicionada(amostraAdicionadaLote)

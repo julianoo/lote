@@ -4,45 +4,48 @@
     bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   Amostra = (function() {
-    var resultadoProntoList;
-
     function Amostra(id, exame, lote) {
       this.id = id;
       this.exame = exame;
       this.lote = lote;
+      this.iniciarProcessamento = bind(this.iniciarProcessamento, this);
       this.fireResultadoPronto = bind(this.fireResultadoPronto, this);
+      this.addResultadoPronto = bind(this.addResultadoPronto, this);
+      this.inventarResultado = bind(this.inventarResultado, this);
       this.criadoEm = new Date;
       this.status = 'aguardando';
       console.log('nova amostra ' + this.id + ' exame ' + this.exame.codigo);
+      this.resultadoProntoList = [];
     }
 
-    Amostra.resultado;
-
-    Amostra.resultadoEm;
-
-    Amostra.normal;
-
-    resultadoProntoList = [];
+    Amostra.prototype.inventarResultado = function() {
+      this.resultadoEm = new Date;
+      this.resultado = Math.round(Math.random() * (this.exame.maximoPossivel - this.exame.minimoPossivel) + this.exame.minimoPossivel);
+      this.normal = this.exame.resultadoNormal(this.resultado);
+      return this.fireResultadoPronto();
+    };
 
     Amostra.prototype.addResultadoPronto = function(f) {
-      return resultadoProntoList.push(f);
+      return this.resultadoProntoList.push(f);
     };
 
     Amostra.prototype.fireResultadoPronto = function() {
-      var f, i, len, results;
+      var f, i, len, ref, results;
       this.status = 'pronto';
-      console.log('resultado pronto amostra ' + this.id);
+      console.log('resultado pronto amostra ' + this.id + ' exame ' + this.exame.codigo + ' valor ' + this.resultado);
+      ref = this.resultadoProntoList;
       results = [];
-      for (i = 0, len = resultadoProntoList.length; i < len; i++) {
-        f = resultadoProntoList[i];
-        results.push(f());
+      for (i = 0, len = ref.length; i < len; i++) {
+        f = ref[i];
+        results.push(f(this));
       }
       return results;
     };
 
     Amostra.prototype.iniciarProcessamento = function() {
       this.status = 'processo';
-      return console.log('amostra em processo ' + this.id);
+      console.log('amostra em processo ' + this.id);
+      return setTimeout(this.inventarResultado, Math.random() * 90000);
     };
 
     return Amostra;
