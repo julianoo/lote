@@ -14,6 +14,7 @@
       this.addInicioProcesso = bind(this.addInicioProcesso, this);
       this.addAmostra = bind(this.addAmostra, this);
       this.verificarLotePronto = bind(this.verificarLotePronto, this);
+      this.retornaHtml = bind(this.retornaHtml, this);
       this.status = 'aberto';
       console.log('novo lote ' + this.id);
       setTimeout(this.fireInicioProcesso, 30000);
@@ -23,24 +24,29 @@
       this.amostraAdicionadaList = [];
     }
 
+    Lote.prototype.retornaHtml = function() {
+      return '<div class="panel panel-default" id="panel' + this.id + '"> <div class="panel-heading"> <h3 class="panel-title">Lote ' + this.id + '</h3> </div> <div class="panel-body" id="lote' + this.id + '"></div> </div>';
+    };
+
     Lote.prototype.verificarLotePronto = function(a) {
-      var i, len, processando, ref;
+      var am, i, len, processando, ref;
+      $('#amostra' + a.id).replaceWith(a.retornaHtml());
       processando = false;
       ref = this.amostras;
       for (i = 0, len = ref.length; i < len; i++) {
-        a = ref[i];
-        if (a.status === 'processo') {
+        am = ref[i];
+        if (am.status === 'processo') {
           processando = true;
         }
       }
       if (!processando) {
-        return this.fireFimProcesso;
+        return this.fireFimProcesso();
       }
     };
 
     Lote.prototype.addAmostra = function(a) {
-      this.amostras.push(a);
       a.addResultadoPronto(this.verificarLotePronto);
+      this.amostras.push(a);
       return this.fireAmostraAdicionada(a);
     };
 
@@ -53,16 +59,16 @@
       var a, f, i, j, len, len1, ref, ref1, results;
       this.status = 'processo';
       console.log('lote em processo ' + this.id);
-      ref = this.inicioProcessoList;
+      ref = this.amostras;
       for (i = 0, len = ref.length; i < len; i++) {
-        f = ref[i];
-        f(this);
+        a = ref[i];
+        a.iniciarProcessamento();
       }
-      ref1 = this.amostras;
+      ref1 = this.inicioProcessoList;
       results = [];
       for (j = 0, len1 = ref1.length; j < len1; j++) {
-        a = ref1[j];
-        results.push(a.iniciarProcessamento());
+        f = ref1[j];
+        results.push(f(this));
       }
       return results;
     };
@@ -75,7 +81,7 @@
     Lote.prototype.fireFimProcesso = function() {
       var f, i, len, ref, results;
       this.status = 'pronto';
-      console.log('lote pronto' + this.id);
+      console.log('lote pronto ' + this.id);
       ref = this.fimProcessoList;
       results = [];
       for (i = 0, len = ref.length; i < len; i++) {

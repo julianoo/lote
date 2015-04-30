@@ -44,10 +44,17 @@ loteAberto = null
 
 inicioProcessamentoLote = (lote) ->
   loteAberto = null
+  $('#panel'+lote.id).remove()
+  $('#loteProcessandoPanel').append(lote.retornaHtml())
+  for a in lote.amostras
+    $('#lote'+lote.id).append(a.retornaHtml())
 
 fimProcessamentoLote = (lote) ->
+  $('#loteProntoPanel').append($('#panel'+lote.id))
+  $('#panel'+lote.id).accordion({collapsible: true, collapsed: true})    
 
 amostraAdicionadaLote = (lote, am) ->
+  $('#lote'+lote.id).append(am.retornaHtml())
 
 
 gerarAmostra = () ->
@@ -58,6 +65,7 @@ gerarAmostra = () ->
       loteAberto.addInicioProcesso(inicioProcessamentoLote)
       loteAberto.addFimProcesso(fimProcessamentoLote)
       loteAberto.addAmostraAdicionada(amostraAdicionadaLote)
+      $('#loteAbertoPanel').append(loteAberto.retornaHtml())
 
     idAmostra = idAmostra + 1
     am = new Amostra(idAmostra, exames[Math.floor(Math.random()*4)], loteAberto)

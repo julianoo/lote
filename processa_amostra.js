@@ -81,12 +81,30 @@
   loteAberto = null;
 
   inicioProcessamentoLote = function(lote) {
-    return loteAberto = null;
+    var a, i, len, ref, results;
+    loteAberto = null;
+    $('#panel' + lote.id).remove();
+    $('#loteProcessandoPanel').append(lote.retornaHtml());
+    ref = lote.amostras;
+    results = [];
+    for (i = 0, len = ref.length; i < len; i++) {
+      a = ref[i];
+      results.push($('#lote' + lote.id).append(a.retornaHtml()));
+    }
+    return results;
   };
 
-  fimProcessamentoLote = function(lote) {};
+  fimProcessamentoLote = function(lote) {
+    $('#loteProntoPanel').append($('#panel' + lote.id));
+    return $('#panel' + lote.id).accordion({
+      collapsible: true,
+      collapsed: true
+    });
+  };
 
-  amostraAdicionadaLote = function(lote, am) {};
+  amostraAdicionadaLote = function(lote, am) {
+    return $('#lote' + lote.id).append(am.retornaHtml());
+  };
 
   gerarAmostra = function() {
     var am;
@@ -97,6 +115,7 @@
         loteAberto.addInicioProcesso(inicioProcessamentoLote);
         loteAberto.addFimProcesso(fimProcessamentoLote);
         loteAberto.addAmostraAdicionada(amostraAdicionadaLote);
+        $('#loteAbertoPanel').append(loteAberto.retornaHtml());
       }
       idAmostra = idAmostra + 1;
       am = new Amostra(idAmostra, exames[Math.floor(Math.random() * 4)], loteAberto);

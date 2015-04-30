@@ -8,17 +8,26 @@ class Lote
     @fimProcessoList = []
     @amostraAdicionadaList = []
 
+  retornaHtml: () =>
+    return '<div class="panel panel-default" id="panel'+@id+'">
+      <div class="panel-heading">
+        <h3 class="panel-title">Lote '+@id+'</h3>
+      </div>
+      <div class="panel-body" id="lote'+@id+'"></div>
+    </div>'
+
   verificarLotePronto: (a) =>
+    $('#amostra'+a.id).replaceWith(a.retornaHtml())
     processando = false
-    for a in @amostras
-      if a.status == 'processo'
+    for am in @amostras
+      if am.status == 'processo'
         processando = true
     if !processando
-      this.fireFimProcesso
+      this.fireFimProcesso()
 
   addAmostra: (a) =>
-    @amostras.push(a)
     a.addResultadoPronto(this.verificarLotePronto)
+    @amostras.push(a)
     this.fireAmostraAdicionada(a)
 
   addInicioProcesso: (f) =>
@@ -28,8 +37,8 @@ class Lote
   fireInicioProcesso: =>
     @status = 'processo'
     console.log('lote em processo '+@id)
-    f this for f in @inicioProcessoList
     a.iniciarProcessamento() for a in @amostras
+    f this for f in @inicioProcessoList
 
   addFimProcesso: (f) =>
     @fimProcessoList.push(f)
@@ -37,7 +46,7 @@ class Lote
 
   fireFimProcesso: =>
     @status = 'pronto'
-    console.log('lote pronto'+@id)
+    console.log('lote pronto '+@id)
     f this for f in @fimProcessoList
 
   addAmostraAdicionada: (f) =>

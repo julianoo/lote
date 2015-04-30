@@ -12,11 +12,38 @@
       this.fireResultadoPronto = bind(this.fireResultadoPronto, this);
       this.addResultadoPronto = bind(this.addResultadoPronto, this);
       this.inventarResultado = bind(this.inventarResultado, this);
+      this.retornaHtml = bind(this.retornaHtml, this);
       this.criadoEm = new Date;
       this.status = 'aguardando';
       console.log('nova amostra ' + this.id + ' exame ' + this.exame.codigo);
       this.resultadoProntoList = [];
     }
+
+    Amostra.prototype.retornaHtml = function() {
+      var resultado, tipo;
+      tipo = '';
+      resultado = '';
+      if (this.status === 'aguardando') {
+        tipo = 'alert-info';
+      } else if (this.status === 'processo') {
+        tipo = 'alert-warning';
+      } else if (this.status === 'pronto') {
+        if (this.normal) {
+          tipo = 'alert-success';
+        } else if (!this.normal) {
+          tipo = 'alert-danger';
+        }
+        if (this.exame.tipo === 'numero') {
+          resultado = this.resultado;
+        } else if (this.resultado) {
+          resultado = 'Positivo';
+        } else {
+          resultado = 'Negativo';
+        }
+      }
+      return '<div class="' + tipo + '" role="alert" id="amostra' + this.id + '">#' + this.id + ' ' + this.exame.codigo.toUpperCase() + ': ' + resultado;
+      return +'</div>';
+    };
 
     Amostra.prototype.inventarResultado = function() {
       this.resultadoEm = new Date;
@@ -45,7 +72,7 @@
     Amostra.prototype.iniciarProcessamento = function() {
       this.status = 'processo';
       console.log('amostra em processo ' + this.id);
-      return setTimeout(this.inventarResultado, Math.random() * 90000);
+      return setTimeout(this.inventarResultado, Math.random() * 30000);
     };
 
     return Amostra;
